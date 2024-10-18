@@ -1,0 +1,20 @@
+[package]
+name = "bytesbox"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.70"
+authors = ["nutsloop <nutsloop@proton.me>"]
+license-file = "LICENSE"
+readme = "README.md"
+repository = "https://github.com/nutsloop/bytesbox"
+homepage = "https://github.com/nutsloop/bytesbox"
+description = """
+ByteBox is a high-performance hash map implementation optimized for byte slices.
+It efficiently maps keys and values of type Vec<u8>, providing full ownership of the data.
+ByteBox uses a custom hash function with linked-list-based collision handling, ensuring
+low memory overhead and optimal performance.
+"""
+categories = ["data-structures", "no-std", "memory-management"]
+keywords = ["byte-slice", "hash", "performance", "memory"]
+[dependencies]
+bytescolor = "0.1.0"
