@@ -2,7 +2,7 @@ use bytesbox::ByteBox;
 
 #[test]
 fn update() {
-    let mut byte_box = ByteBox::new();
+    let mut byte_box = ByteBox::prealloc(4);
 
     let key = b"key";
     let val1 = b"value1";

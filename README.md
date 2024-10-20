@@ -1,40 +1,71 @@
-# ByteBox Crate
+# bytesbox Crate
 
-The `ByteBox` crate provides a custom hash map implementation optimized for byte slices (`Vec<u8>`). It allows you to map keys of type `Vec<u8>` to values of type `Vec<u8>`, offering an efficient way to work with raw byte data without unnecessary cloning or allocations.
+The `bytesbox` crate provides a custom hash map implementation optimized for byte slices (`Vec<u8>`).
+It allows you to map keys of type `Vec<u8>` to values of type `Vec<u8>`, offering an efficient way to work with raw byte data without unnecessary cloning or allocations.
+Additionally, it includes methods for inserting primitive types such as integers and floating points.
 
 ## Features
 
-- **Custom Hash Function (`hpulse`)**: Uses a bespoke hash function optimized for hashing byte slices.
 - **Collision Resolution via Linked Lists**: Handles hash collisions using linked lists (chaining), ensuring access to all entries even when collisions occur.
 - **Dynamic Resizing**: Automatically resizes the underlying storage when the load factor exceeds a predefined threshold, maintaining optimal performance.
 - **Customizable Initial Capacity**: Provides constructors to create a `ByteBox` with a default capacity or a specified capacity.
+- **Primitive Type Support**: Insert primitive types (e.g., `u8`, `i32`, `f64`) directly into the hash map.
 - **Ownership Model**: Fully owns the keys and values (`Vec<u8>`), eliminating lifetime management issues.
 
-## Example Usage
+## Installation
 
-Below is a basic example of how to use the `ByteBox` crate in your Rust project.
+To use the `bytesbox` crate:
+
+- add it as a dependency in your project's `Cargo.toml`:
+
+  ```toml
+  [dependencies]
+  bytesbox = "0.2.0"
+  ```
+
+- use cargo add:
+
+  ```bash
+  cargo add bytesbox
+  ```
+
+Once added, you can import and use the crate in your Rust programs.
+
+## Basic Example: Main Program
+
+Here’s a simple example showing how to use the `ByteBox` in your `main.rs` file:
 
 ```rust
-let key = b"hello";
-let value = b"world";
+use bytesbox::ByteBox;
 
-let mut byte_box = ByteBox::new();
-byte_box.insert(key, value);
+fn main() {
+    let key = b"hello";
+    let value = b"world";
 
-if let Some(val) = byte_box.get(key) {
-    println!("Key: {:?}, Value: {:?}", key, val);
+    let mut byte_box = ByteBox::new();
+    byte_box.insert(key, value);
+
+    if let Some(val) = byte_box.get(key) {
+        println!(
+            "Key: {:?}, Value: {:?}",
+            String::from_utf8_lossy(key),
+            String::from_utf8_lossy(val)
+        );
+    }
 }
 ```
 
-This will create a `ByteBox`, insert a key-value pair, and retrieve it.
+and now run the program:
 
-## Custom Hashing
+```bash
+cargo run
+```
 
-The `ByteBox` crate uses a custom hashing function, `hpulse`, based on the FNV-1a hashing algorithm. This hash function is optimized for hashing byte slices and provides good distribution across buckets.
+it will print out:
 
-### How the Hashing Works
-
-The FNV-1a algorithm works by XORing each byte in the key with an offset value and then multiplying the result by a large prime number. This approach provides fast and simple hash computation while minimizing collisions.
+```bash
+Key: "hello", Value: "world"
+```
 
 ## Handling Collisions
 
@@ -45,10 +76,10 @@ When two keys hash to the same index, `ByteBox` uses a linked list (chaining) to
 Let's simulate a scenario where two different keys collide:
 
 ```rust
-let mut byte_box = ByteBox::new();
+let mut byte_box = ByteBox::prealloc(2);
 
 byte_box.insert(b"key1", b"value1");
-byte_box.insert(b"key2", b"value2"); // Assume key1 and key2 collide
+byte_box.insert(b"key2", b"value2");
 
 byte_box.view_table(); // Display the hash table to see the collision
 ```
@@ -86,6 +117,37 @@ byte_box.view_table();
 ```
 
 This will print out the current state of the hash table, showing each cell and its associated entries.
+
+## Primitive Insertion with `insert_primitive`
+
+You can insert primitive types into the `ByteBox` using the `insert_primitive` method. This automatically converts the primitive into a `Vec<u8>` for storage.
+
+### Example of Inserting Primitives
+
+```rust
+let mut byte_box = ByteBox::new();
+byte_box.insert_primitive(b"age", 30u8);
+byte_box.insert_primitive(b"score", 99.5f64);
+byte_box.insert_primitive(b"balance", -100i32);
+```
+
+In this example, you can see how to insert a `u8`, `f64`, and `i32` directly into the `ByteBox`.
+
+## Iteration with `iter`
+
+You can iterate over all key-value pairs in the ByteBox using the `iter` method. This allows you to traverse the entire collection, accessing each `key` and its corresponding `value` in a seamless and efficient manner.
+
+### Example of Iterating
+
+```rust
+let mut byte_box = ByteBox::new();
+byte_box.insert(b"key1", b"value1");
+byte_box.insert(b"key2", b"value2");
+
+for (key, value) in byte_box.iter() {
+    println!("{:?}: {:?}", key, value);
+}
+```
 
 ## Safety Considerations
 

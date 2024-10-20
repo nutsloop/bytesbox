@@ -1,13 +1,13 @@
 [package]
 name = "bytesbox"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 rust-version = "1.70"
 authors = ["nutsloop <nutsloop@proton.me>"]
 license-file = "LICENSE"
 readme = "README.md"
 repository = "https://github.com/nutsloop/bytesbox"
-homepage = "https://github.com/nutsloop/bytesbox"
+homepage = "https://crates.io/crates/bytesbox"
 description = """
 ByteBox is a high-performance hash map implementation optimized for byte slices.
 It efficiently maps keys and values of type Vec<u8>, providing full ownership of the data.
