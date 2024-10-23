@@ -1,10 +1,10 @@
 [package]
 name = "bytesbox"
-version = "0.2.0"
+version = "0.3.0"
 edition = "2021"
 rust-version = "1.70"
 authors = ["nutsloop <nutsloop@proton.me>"]
-license-file = "LICENSE"
+license = "Apache-2.0"
 readme = "README.md"
 repository = "https://github.com/nutsloop/bytesbox"
 homepage = "https://crates.io/crates/bytesbox"
@@ -17,4 +17,6 @@ low memory overhead and optimal performance.
 categories = ["data-structures", "no-std", "memory-management"]
 keywords = ["byte-slice", "hash", "performance", "memory"]
 [dependencies]
-bytescolor = "0.1.0"
+bytescolor = { version = "0.1.0", optional = true }
+[features]
+color = ["bytescolor"]

@@ -44,6 +44,7 @@ pub mod primitives;
 use iterator::*;
 use primitives::*;
 
+#[cfg(feature = "color")]
 use bytescolor::ByteColor;
 
 use std::collections::hash_map::DefaultHasher;
@@ -423,6 +424,7 @@ impl ByteBox {
     /// bytebox.insert(b"key", b"value");
     /// bytebox.view_table();
     /// ```
+    #[cfg(feature = "color")]
     pub fn view_table(&self) {
         // Cell Header
         let bytebox_header = format!(
@@ -558,5 +560,130 @@ impl ByteBox {
             "{}",
             "────────────────────────────────────────────────".blue()
         );
+    }
+    #[cfg(not(feature = "color"))]
+    pub fn view_table(&self) {
+        // Cell Header
+        let bytebox_header = format!(
+            "{}, number of cell ({}), allocation ({})",
+            "ByteBox",
+            self.len(),
+            self.allocation()
+        );
+        // Print separator before each cell
+        println!("{}", "────────────────────────────────────────────────");
+        println!("{}", bytebox_header);
+        for (index, cell) in self.cells.iter().enumerate() {
+            let mut current = cell.as_ref();
+            // Cell Header
+            let cell_header = format!("  Cell {}:", index);
+            // Print separator before each cell
+            println!("{}", "────────────────────────────────────────────────");
+            println!("{}", cell_header);
+
+            while let Some(entry) = current {
+                let mut max_key_len = 0;
+                let mut max_val_len = 0;
+
+                let k_len = entry.key.len();
+                let v_len = entry.value.len();
+
+                if k_len > max_key_len {
+                    max_key_len = k_len;
+                }
+                if v_len > max_val_len {
+                    max_val_len = v_len;
+                }
+
+                // Determine the longest length
+                let get_longest_len = std::cmp::max(max_key_len, max_val_len);
+                let k_closing_pipe = get_longest_len - k_len;
+                let v_closing_pipe = get_longest_len - v_len;
+                // Start of the cell box
+                // key val display Start
+                println!(
+                    "    {}",
+                    format!("+---+  +-{}-+", "-".repeat(get_longest_len))
+                );
+                // Key and value with arrows
+                println!(
+                    "    {}",
+                    format!(
+                        "| {} |->| {}{} |",
+                        "k",
+                        format!("{}", String::from_utf8_lossy(&entry.key)),
+                        " ".repeat(k_closing_pipe)
+                    )
+                );
+                println!(
+                    "    {}",
+                    format!("+---+  +-{}-+", "-".repeat(get_longest_len))
+                );
+                println!(
+                    "    {}",
+                    format!(
+                        "| {} |->| {}{} |",
+                        "v",
+                        format!("{}", String::from_utf8_lossy(&entry.value)),
+                        " ".repeat(v_closing_pipe)
+                    )
+                );
+                println!(
+                    "    {}",
+                    format!("+---+  +-{}-+", "-".repeat(get_longest_len))
+                );
+                // key val display END
+
+                // represantation on the Entry START
+                println!("    | byte_box | contains:");
+                let box_container = format!(
+                    "    {}{}+",
+                    "|           +-------------------------------",
+                    "-".repeat(get_longest_len)
+                );
+                println!("{}", box_container);
+                let box_container_len = box_container.len() - 36;
+                println!(
+                    "    {}{}|",
+                    "|           | Entry:                        ",
+                    " ".repeat(get_longest_len)
+                );
+                println!(
+                    "    {}{}|",
+                    format!(
+                        "|           | - key: Vec<u8> ({})",
+                        format!("{}", String::from_utf8_lossy(&entry.key))
+                    ),
+                    " ".repeat(box_container_len - k_len)
+                );
+                println!(
+                    "    {}{}|",
+                    format!(
+                        "|           | - val: Vec<u8> ({})",
+                        format!("{}", String::from_utf8_lossy(&entry.value))
+                    ),
+                    " ".repeat(box_container_len - v_len)
+                );
+                println!(
+                    "    |           | - next: None                  {}|",
+                    " ".repeat(get_longest_len)
+                );
+                println!(
+                    "    {}{}+",
+                    "|           +-------------------------------",
+                    "-".repeat(get_longest_len)
+                );
+                println!("    {}{}+", "+-------", "-".repeat(box_container_len + 24));
+                current = entry.next.as_ref();
+            }
+            // Indicate that the cell is empty in red
+            println!("    {}", "Empty");
+
+            // representation of the Entry END
+        }
+
+        // Separator line
+        println!("{}", "────────────────────────────────────────────────");
+        println!("{}", "────────────────────────────────────────────────");
     }
 }

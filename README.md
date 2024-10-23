@@ -11,22 +11,38 @@ Additionally, it includes methods for inserting primitive types such as integers
 - **Customizable Initial Capacity**: Provides constructors to create a `ByteBox` with a default capacity or a specified capacity.
 - **Primitive Type Support**: Insert primitive types (e.g., `u8`, `i32`, `f64`) directly into the hash map.
 - **Ownership Model**: Fully owns the keys and values (`Vec<u8>`), eliminating lifetime management issues.
+- **Optional color output**: by enabling the feature color of the crate the .view_table() method will output a colored, formatted text.
 
 ## Installation
-
-To use the `bytesbox` crate:
 
 - add it as a dependency in your project's `Cargo.toml`:
 
   ```toml
+  # no color feature
   [dependencies]
   bytesbox = "0.2.0"
   ```
+
+- with color features
+
+  ```toml
+  # with color features
+  [dependencies]
+  bytesbox = {version: "0.3.0", features = ["color"]}
+  ```
+
+___
 
 - use cargo add:
 
   ```bash
   cargo add bytesbox
+  ```
+
+- with color features
+
+  ```bash
+  cargo add bytesbox --features "color"
   ```
 
 Once added, you can import and use the crate in your Rust programs.
