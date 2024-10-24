@@ -348,6 +348,34 @@ impl ByteBox {
         None
     }
 
+    /// Removes all key-value pairs from the `ByteBox`, resetting it to an empty state.
+    ///
+    /// This method retains the current capacity of the hash table, allowing it to be reused
+    /// without the overhead of reallocating memory. All existing entries are removed, and
+    /// the length (`len`) is set to zero.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use bytesbox::ByteBox;
+    ///
+    /// let mut bytebox = ByteBox::new();
+    /// bytebox.insert(b"key1", b"value1");
+    /// bytebox.insert(b"key2", b"value2");
+    /// assert_eq!(bytebox.len(), 2);
+    ///
+    /// bytebox.clear();
+    /// assert_eq!(bytebox.len(), 0);
+    /// assert_eq!(bytebox.get(b"key1"), None);
+    /// assert_eq!(bytebox.get(b"key2"), None);
+    /// ```
+    pub fn clear(&mut self) {
+        for cell in &mut self.cells {
+            *cell = None;
+        }
+        self.len = 0;
+    }
+
     /// Doubles the current capacity of the `ByteBox` and rehashes all existing entries.
     ///
     /// This method is called internally when the load factor exceeds the threshold.
